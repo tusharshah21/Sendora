@@ -1,0 +1,25 @@
+{
+  "name": "crypto-transfer-smart-contract",
+  "version": "1.0.0",
+  "description": "Smart contracts for Crypto Transfer Web3 DApp using Hardhat 3",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "hardhat test",
+    "test:solidity": "hardhat test --grep .t.sol",
+    "compile": "hardhat compile",
+    "deploy": "hardhat ignition deploy",
+    "coverage": "hardhat coverage"
+  },
+  "keywords": ["ethereum", "hardhat", "solidity", "web3"],
+  "author": "tusharshah21",
+  "license": "ISC",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-ignition": "^0.15.5",
+    "ethers": "^6.0.0",
+    "hardhat": "^3.0.7"
+  },
+  "dependencies": {
+    "dotenv": "^16.5.0"
+  }
+}
