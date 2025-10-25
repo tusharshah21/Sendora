@@ -33,5 +33,11 @@ export default {
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
       chainId: 84532,
     },
+    hedera: {
+      type: "http",
+      url: "https://testnet.hashio.io/api",
+      accounts: process.env.HEDERA_ECDSA_PRIVATE_KEY ? [process.env.HEDERA_ECDSA_PRIVATE_KEY] : [],
+      chainId: 296, // Hedera testnet
+    },
   },
 };

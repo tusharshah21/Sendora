@@ -20,7 +20,7 @@ const Input = ({ placeholder, name, type, value, handleChange }) => (
 );
 
 const Welcome = () => {
-  const { currentAccount, connectWallet, handleChange, sendTransaction, formData, isLoading } = useContext(TransactionContext);
+  const { currentAccount, connectWallet, handleChange, sendTransaction, formData, isLoading, switchNetwork, currentChain } = useContext(TransactionContext);
 
   const handleSubmit = (e) => {
     const { addressTo, amount, keyword, message } = formData;
@@ -55,6 +55,50 @@ const Welcome = () => {
             </button>
           )}
 
+          {currentAccount && (
+            <div className="flex flex-col my-5 space-y-2">
+              <p className="text-white text-sm">Select Network:</p>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => switchNetwork(11155111)}
+                  className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    currentChain === 11155111 ? 'bg-[#2952e3] text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'
+                  }`}
+                >
+                  Sepolia
+                </button>
+                <button
+                  type="button"
+                  onClick={() => switchNetwork(11155420)}
+                  className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    currentChain === 11155420 ? 'bg-[#2952e3] text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'
+                  }`}
+                >
+                  Optimism Sepolia
+                </button>
+                <button
+                  type="button"
+                  onClick={() => switchNetwork(84532)}
+                  className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    currentChain === 84532 ? 'bg-[#2952e3] text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'
+                  }`}
+                >
+                  Base Sepolia
+                </button>
+                <button
+                  type="button"
+                  onClick={() => switchNetwork(296)}
+                  className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    currentChain === 296 ? 'bg-[#2952e3] text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'
+                  }`}
+                >
+                  Hedera Testnet
+                </button>
+              </div>
+            </div>
+          )}
+
           <div className="grid sm:grid-cols-3 grid-cols-2 w-full mt-10">
             <div className={`rounded-tl-2xl ${companyCommonStyles}`}>
               Reliability
@@ -87,7 +131,11 @@ const Welcome = () => {
                   {shortenAddress(currentAccount)}
                 </p>
                 <p className="text-white font-semibold text-lg mt-1">
-                  Ethereum
+                  {currentChain === 11155111 ? 'Sepolia' :
+                   currentChain === 11155420 ? 'Optimism Sepolia' :
+                   currentChain === 84532 ? 'Base Sepolia' :
+                   currentChain === 296 ? 'Hedera Testnet' :
+                   'Ethereum'}
                 </p>
               </div>
             </div>

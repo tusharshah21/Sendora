@@ -14,6 +14,12 @@ client/.env
 client/.env.local
 smart_contract/.env
 
+# Private keys and credentials
+private_key.pem
+*.pem
+*.key
+secrets/
+
 # Hardhat
 smart_contract/cache/
 smart_contract/artifacts/
