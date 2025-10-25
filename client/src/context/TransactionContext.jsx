@@ -12,10 +12,8 @@ const createEthereumContract = async () => {
   const provider = new ethers.providers.Web3Provider(ethereum);
   const signer = provider.getSigner();
   const { chainId } = await provider.getNetwork();
-  console.log("🌐 Current network:", chainId);
 
   const contractAddress = contractAddresses[chainId];
-  console.log("📄 Contract address for chain", chainId, ":", contractAddress);
 
   if (!contractAddress || contractAddress === "0x...") {
     throw new Error(`Contract not deployed on chain ${chainId}. Available chains: ${Object.keys(contractAddresses).join(', ')}`);
@@ -26,17 +24,6 @@ const createEthereumContract = async () => {
     contractABI,
     signer
   );
-
-  console.log("✅ Contract created successfully:", transactionContract.address);
-
-  // Test contract connectivity (optional - don't fail if Hedera has issues)
-  try {
-    const testCall = await transactionContract.getTransactionCount();
-    console.log("📊 Contract test call successful, transaction count:", testCall.toString());
-  } catch (contractError) {
-    console.warn("⚠️ Contract test call failed (this is OK for Hedera):", contractError.message);
-    console.warn("🔄 Proceeding anyway - contract might still work for transactions");
-  }
 
   return { contract: transactionContract, signer };
 };
@@ -99,8 +86,6 @@ export const TransactionsProvider = ({ children }) => {
           })
         );
 
-        console.log(structuredTransactions);
-
         setTransactions(structuredTransactions);
       } else {
         console.log("Ethereum is not present");
@@ -116,10 +101,14 @@ export const TransactionsProvider = ({ children }) => {
       const accounts = await ethereum.request({
         method: "eth_accounts",
       });
-      console.log("Connected accounts:", accounts);
       if (accounts.length) {
         setCurrentAccount(accounts[0]);
-        console.log("Wallet is connected:", accounts[0]);
+
+        // Get current network and set it
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const { chainId } = await provider.getNetwork();
+        setCurrentChain(chainId);
+
         getAllTransactions();
         //get all transactions
       } else {
@@ -188,7 +177,6 @@ export const TransactionsProvider = ({ children }) => {
 
         // Add Hedera agent negotiation
         const negotiation = await transferAgent.negotiateTransfer(addressTo, amount, message);
-        console.log("🤖 Hedera agent negotiation result:", negotiation);
 
         // Check if negotiation was successful
         if (!negotiation || negotiation.status !== 'negotiated') {
@@ -197,12 +185,9 @@ export const TransactionsProvider = ({ children }) => {
           return;
         }
 
-        console.log("✅ Agent negotiation successful, proceeding with transaction...");
-
         // Check balance before sending transaction
         const balance = await signer.getBalance();
         const balanceInEther = ethers.utils.formatEther(balance);
-        console.log("💰 Account balance:", balanceInEther, "HBAR");
 
         // Hedera requires some HBAR for gas fees
         const minBalance = ethers.utils.parseEther("0.01"); // 0.01 HBAR minimum for fees
@@ -212,43 +197,23 @@ export const TransactionsProvider = ({ children }) => {
           throw new Error(`Insufficient balance. Have: ${balanceInEther} HBAR, Need: ${ethers.utils.formatEther(totalRequired)} HBAR (including gas fees)`);
         }
 
-        console.log("✅ Balance check passed");
-
         // Estimate gas to check if transaction would succeed
-        console.log("⛽ Estimating gas for transaction...");
         try {
-          const estimatedGas = await transactionsContract.estimateGas.addToBlockchain(
+          await transactionsContract.estimateGas.addToBlockchain(
             addressTo,
             parsedAmount,
             message,
             keyword,
             { value: parsedAmount }
           );
-          console.log("⛽ Gas estimation successful:", estimatedGas.toString());
         } catch (estimateError) {
           console.warn("⚠️ Gas estimation failed (OK for Hedera):", estimateError.message);
-          console.log("🔄 Proceeding without gas estimation...");
         }
-
-        console.log("📤 Sending transaction to blockchain...");
-        console.log("📍 Function parameters:");
-        console.log("   - receiver:", addressTo);
-        console.log("   - amount:", parsedAmount.toString());
-        console.log("   - message:", message);
-        console.log("   - keyword:", keyword);
-        console.log("   - msg.value (override):", parsedAmount.toString());
 
         // Call the contract function with proper error handling
         let transactionHash;
         try {
           // Method 1: Standard ethers.js approach
-          console.log("🔄 Method 1: Sending via standard ethers.js...");
-          console.log("   Parameters sanity check:");
-          console.log("   - addressTo is valid:", ethers.utils.isAddress(addressTo));
-          console.log("   - amount > 0:", parsedAmount.gt(0));
-          console.log("   - message:", message);
-          console.log("   - keyword:", keyword);
-          
           transactionHash = await transactionsContract.addToBlockchain(
             addressTo,
             parsedAmount,
@@ -256,7 +221,6 @@ export const TransactionsProvider = ({ children }) => {
             keyword,
             { value: parsedAmount }
           );
-          console.log("✅ Transaction submission successful via Method 1");
         } catch (method1Error) {
           console.warn("⚠️ Method 1 failed:", method1Error.message);
           console.error("Full error:", method1Error);
@@ -282,12 +246,11 @@ export const TransactionsProvider = ({ children }) => {
               parsedAmount,
               message,
               keyword,
-              { 
+              {
                 value: parsedAmount,
                 gasLimit: ethers.utils.hexlify(500000)  // Hedera standard limit
               }
             );
-            console.log("✅ Transaction submission successful via Method 2");
           } catch (method2Error) {
             console.error("❌ Both methods failed");
             console.error("Method 1 error:", method1Error.message);
@@ -296,11 +259,7 @@ export const TransactionsProvider = ({ children }) => {
           }
         }
 
-        console.log("📤 Transaction sent:", transactionHash.hash);
-        console.log("🔗 Transaction hash:", transactionHash.hash);
-        
         setIsLoading(true);
-        console.log(`⏳ Waiting for confirmation - ${transactionHash.hash}`);
 
         // Use a timeout wrapper for Hedera compatibility
         let receipt;
@@ -311,9 +270,7 @@ export const TransactionsProvider = ({ children }) => {
           );
           
           receipt = await Promise.race([confirmationPromise, timeoutPromise]);
-          console.log(`✅ Transaction confirmed!`);
-          console.log("📋 Transaction receipt:", receipt);
-          
+
           if (receipt && receipt.status === 1) {
             console.log("✅ Transaction SUCCESS - Block:", receipt.blockNumber);
           } else if (receipt && receipt.status === 0) {
@@ -322,9 +279,7 @@ export const TransactionsProvider = ({ children }) => {
           }
         } catch (waitError) {
           console.warn("⚠️ Confirmation error:", waitError.message);
-          console.log("✅ Transaction likely sent (checking on chain...)");
           console.log("🔗 Hedera HashScan: https://hashscan.io/testnet/transaction/" + transactionHash.hash);
-          console.log("⏳ Transaction may still be processing. Check the link above.");
         }
 
         setIsLoading(false);
@@ -333,13 +288,10 @@ export const TransactionsProvider = ({ children }) => {
         try {
           const transactionsCount = await transactionsContract.getTransactionCount();
           setTransactionCount(transactionsCount.toNumber());
-          console.log("📊 Transaction count:", transactionsCount.toNumber());
         } catch (countError) {
           console.warn("⚠️ Could not get transaction count:", countError.message);
         }
 
-        console.log("🎉 Transfer completed!");
-        
         // Show success toast and wait before reload
         setTimeout(() => {
           window.location.reload();
@@ -398,7 +350,6 @@ export const TransactionsProvider = ({ children }) => {
           { value: totalAmount }
         );
 
-        console.log(`Batch transfer successful: ${transactionHash.hash}`);
         setIsLoading(false);
         setTransactionCount(transactionCount + receivers.length);
       } else {
@@ -418,12 +369,27 @@ export const TransactionsProvider = ({ children }) => {
     const initHederaAgent = async () => {
       try {
         await transferAgent.initializeA2A();
-        console.log("Hedera A2A messaging initialized");
       } catch (error) {
         console.error("Failed to initialize Hedera A2A:", error);
       }
     };
     initHederaAgent();
+
+    // Listen for network changes
+    if (ethereum) {
+      ethereum.on('chainChanged', (chainId) => {
+        console.log("Network changed to:", parseInt(chainId, 16));
+        setCurrentChain(parseInt(chainId, 16));
+        window.location.reload(); // Reload to update contract instance
+      });
+    }
+
+    // Cleanup listener on unmount
+    return () => {
+      if (ethereum) {
+        ethereum.removeListener('chainChanged', () => {});
+      }
+    };
   }, [transactionCount]);
 
   return (

@@ -35,7 +35,6 @@ export class TransferAgent {
     if (this.a2aInitialized) return this.topicId;
 
     try {
-      console.log("Initializing A2A messaging topic...");
 
       // For demo purposes, we'll use a pre-created topic to avoid transaction issues
       // In production, you'd create a new topic like this:
@@ -52,7 +51,6 @@ export class TransferAgent {
 
       // Using a placeholder topic ID for now
       this.topicId = "0.0.123456"; // Replace with actual topic ID
-      console.log("A2A topic set:", this.topicId);
 
       this.a2aInitialized = true;
 
@@ -79,7 +77,6 @@ export class TransferAgent {
         .subscribe(client, (message) => {
           try {
             const msgData = JSON.parse(message.contents.toString());
-            console.log("Received A2A message:", msgData);
 
             if (msgData.to === this.name || msgData.to === "all") {
               this.messages.set(msgData.id, msgData);
@@ -113,8 +110,6 @@ export class TransferAgent {
         await messageTx.getReceipt(client);
       }
 
-      console.log("A2A message sent:", message);
-
       // Simulate receiving the message for demo
       if (toAgent === this.name) {
         setTimeout(() => this.handleIncomingMessage(message), 100);
@@ -140,7 +135,6 @@ export class TransferAgent {
 
     switch (message.type) {
       case 'negotiation':
-        console.log("Handling negotiation request from:", message.from);
         // Auto-confirm for demo (in real scenario, this could involve user approval)
         await this.sendA2AMessage(message.from, 'confirmation', {
           originalMessageId: message.id,
@@ -151,22 +145,20 @@ export class TransferAgent {
         break;
 
       case 'confirmation':
-        console.log("Received confirmation for transfer");
         // Could trigger execution here
         break;
 
       case 'execution':
-        console.log("Transfer execution status:", message.content.status);
         break;
 
       default:
-        console.log("Unknown message type:", message.type);
+        // Unknown message type - ignore
+        break;
     }
   }
 
   // Enhanced negotiation with A2A messaging
   async negotiateTransfer(recipient, amount, message) {
-    console.log(`Agent negotiating transfer: ${amount} HBAR to ${recipient} with message: ${message}`);
 
     // Send A2A negotiation message (to self for demo, but could be to other agents)
     const a2aMessage = await this.sendA2AMessage("Sendora Transfer Agent", 'negotiation', {
@@ -190,7 +182,6 @@ export class TransferAgent {
   // Execute transfer on Hedera
   async executeTransfer(recipient, amount) {
     try {
-      console.log(`Executing transfer: ${amount} HBAR to ${recipient}`);
 
       const transferTx = new TransferTransaction()
         .addHbarTransfer(client.operatorAccountId, new Hbar(-amount)) // Deduct from sender
@@ -198,8 +189,6 @@ export class TransferAgent {
 
       const txResponse = await transferTx.execute(client);
       const receipt = await txResponse.getReceipt(client);
-
-      console.log("Transfer successful:", receipt.status.toString());
 
       // Send A2A execution confirmation
       await this.sendA2AMessage("Sendora Transfer Agent", 'execution', {

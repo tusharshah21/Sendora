@@ -62,35 +62,37 @@ const Welcome = () => {
                 <button
                   type="button"
                   onClick={() => switchNetwork(11155111)}
-                  className={`px-3 py-1 rounded-full text-xs font-medium ${
-                    currentChain === 11155111 ? 'bg-[#2952e3] text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'
+                  className={`px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 ${
+                    currentChain === 11155111
+                      ? 'bg-[#2952e3] text-white shadow-lg shadow-blue-500/50 border-2 border-blue-400'
+                      : 'bg-gray-600 text-gray-300 hover:bg-gray-500 border-2 border-transparent'
                   }`}
                 >
                   Sepolia
                 </button>
                 <button
                   type="button"
-                  onClick={() => switchNetwork(11155420)}
-                  className={`px-3 py-1 rounded-full text-xs font-medium ${
-                    currentChain === 11155420 ? 'bg-[#2952e3] text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'
-                  }`}
+                  disabled
+                  className="px-3 py-1 rounded-full text-xs font-medium bg-gray-800 text-gray-500 border-2 border-gray-600 cursor-not-allowed opacity-60"
+                  title="Coming Soon"
                 >
-                  Optimism Sepolia
+                  Optimism Sepolia (Soon)
                 </button>
                 <button
                   type="button"
-                  onClick={() => switchNetwork(84532)}
-                  className={`px-3 py-1 rounded-full text-xs font-medium ${
-                    currentChain === 84532 ? 'bg-[#2952e3] text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'
-                  }`}
+                  disabled
+                  className="px-3 py-1 rounded-full text-xs font-medium bg-gray-800 text-gray-500 border-2 border-gray-600 cursor-not-allowed opacity-60"
+                  title="Coming Soon"
                 >
-                  Base Sepolia
+                  Base Sepolia (Soon)
                 </button>
                 <button
                   type="button"
                   onClick={() => switchNetwork(296)}
-                  className={`px-3 py-1 rounded-full text-xs font-medium ${
-                    currentChain === 296 ? 'bg-[#2952e3] text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'
+                  className={`px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 ${
+                    currentChain === 296
+                      ? 'bg-[#2952e3] text-white shadow-lg shadow-blue-500/50 border-2 border-blue-400'
+                      : 'bg-gray-600 text-gray-300 hover:bg-gray-500 border-2 border-transparent'
                   }`}
                 >
                   Hedera Testnet
