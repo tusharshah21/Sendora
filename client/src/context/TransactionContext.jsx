@@ -83,6 +83,7 @@ export const TransactionsProvider = ({ children }) => {
             message: transaction.message,
             keyword: transaction.keyword,
             amount: parseInt(transaction.amount._hex) / (10 ** 18),
+            chainId: transaction.chainId.toNumber(),
           })
         );
 
