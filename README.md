@@ -84,15 +84,27 @@ Edit `.env` with your actual values:
 ALCHEMY_API_URL=https://eth-sepolia.g.alchemy.com/v2/YOUR_ALCHEMY_API_KEY
 PRIVATE_KEY=your_private_key_without_0x_prefix
 
-# Optional: Additional networks
+# Optimism Sepolia (optional)
 OPTIMISM_SEPOLIA_URL=https://sepolia.optimism.io
+
+# Base Sepolia (optional)
 BASE_SEPOLIA_URL=https://sepolia.base.org
+
+# Hedera Testnet - ECDSA keypair for EVM operations
+HEDERA_ECDSA_PRIVATE_KEY=your_ecdsa_private_key_with_0x_prefix
+HEDERA_EVM_ADDRESS=your_evm_address
+
+# Legacy Hedera credentials (Ed25519)
+HEDERA_ACCOUNT_ID=your_hedera_account_id
+HEDERA_PRIVATE_KEY=your_hedera_private_key
+HEDERA_PRIVATE_KEY_ETH=your_hedera_private_key_with_0x_prefix
 ```
 
 #### Get API Keys
 
 1. **Alchemy API Key**: Sign up at [Alchemy](https://www.alchemy.com/) and create a Sepolia app
 2. **Private Key**: Export from MetaMask (never commit this to git!)
+3. **Hedera Account**: Create at [Hedera Developer Portal](https://portal.hedera.com/) for testnet access
 
 #### Compile Contracts
 
@@ -132,10 +144,15 @@ npm install
 
 #### Configure Environment
 
-Create a `.env.local` file in `client/`:
+Create a `.env` file in `client/`:
 
 ```env
-VITE_GIPHY_API=your_giphy_api_key
+# Giphy API for transaction GIFs
+VITE_GIPHY_API=your_giphy_api_key_here
+
+# Hedera Testnet
+VITE_HEDERA_ACCOUNT_ID=your_hedera_account_id
+VITE_HEDERA_PRIVATE_KEY=your_hedera_private_key
 ```
 
 #### Update Contract Addresses
@@ -185,12 +202,25 @@ This project integrates Hedera's Agent Kit and A2A (Agent-to-Agent) messaging pr
 
 #### 2. Configure Environment
 
-Update `smart_contract/.env`:
+Update `smart_contract/.env` with your Hedera credentials:
 
 ```env
 # Hedera Testnet - ECDSA keypair for EVM operations
-HEDERA_ECDSA_PRIVATE_KEY=0x15cb0e7eb74af075bb2af4248553964e74f3d6e480b94c1afa67777f7a66f69d
-HEDERA_EVM_ADDRESS=0x1576b44dfc51193d04e648bebca60f0b866b3921
+HEDERA_ECDSA_PRIVATE_KEY=your_ecdsa_private_key_with_0x_prefix
+HEDERA_EVM_ADDRESS=your_evm_address
+
+# Legacy Hedera credentials (Ed25519)
+HEDERA_ACCOUNT_ID=your_hedera_account_id
+HEDERA_PRIVATE_KEY=your_hedera_private_key
+HEDERA_PRIVATE_KEY_ETH=your_hedera_private_key_with_0x_prefix
+```
+
+And update `client/.env` with the same Hedera credentials:
+
+```env
+# Hedera Testnet
+VITE_HEDERA_ACCOUNT_ID=your_hedera_account_id
+VITE_HEDERA_PRIVATE_KEY=your_hedera_private_key
 ```
 
 #### 3. Deploy to Hedera
@@ -253,7 +283,42 @@ Event Logging → Transaction Recorded
 - **Invariant Tests**: Property-based testing
 - **Gas Reporting**: Performance optimization
 
-## Useful Commands
+## 🚀 Deployment
+
+### Smart Contract Deployment
+
+The smart contracts are already deployed on multiple networks. To deploy to additional networks:
+
+```sh
+cd smart_contract
+
+# Deploy to Sepolia
+npx hardhat run scripts/deploy-sepolia.mjs --network sepolia
+
+# Deploy to Hedera testnet
+npx hardhat run scripts/deploy-hedera.mjs --network hedera
+
+# Deploy to Optimism Sepolia
+npx hardhat run scripts/deploy-optimism.mjs --network optimismSepolia
+
+# Deploy to Base Sepolia
+npx hardhat run scripts/deploy-base.mjs --network baseSepolia
+```
+
+### Frontend Deployment (Vercel)
+
+1. **Connect Repository**: Import your GitHub repository to Vercel
+2. **Configure Build Settings**:
+   - **Root Directory**: `client`
+   - **Build Command**: `npm run build`
+   - **Output Directory**: `dist`
+3. **Set Environment Variables** in Vercel dashboard:
+   - `VITE_GIPHY_API`: Your Giphy API key
+   - `VITE_HEDERA_ACCOUNT_ID`: Your Hedera account ID
+   - `VITE_HEDERA_PRIVATE_KEY`: Your Hedera private key
+4. **Deploy**: Vercel will automatically deploy on every push to main branch
+
+Your DApp will be live at `https://your-project-name.vercel.app`
 
 ### Smart Contract
 
