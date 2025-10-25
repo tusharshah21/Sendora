@@ -1,6 +1,6 @@
-# Crypto-transfer-web3 Frontend (`client`)
+# Sendora Frontend (`client`)
 
-This is the React frontend for the Crypto-transfer-web3 DApp. It allows users to send Ethereum transactions, view transaction history, and attach GIFs to their transfers using the Giphy API. The UI is styled with TailwindCSS and connects to the Ethereum blockchain via MetaMask and ethers.js.
+This is the React frontend for the Sendora DApp. It allows users to send Ethereum transactions, view transaction history, and attach GIFs to their transfers using the Giphy API. The UI is styled with TailwindCSS and connects to the Ethereum blockchain via MetaMask and ethers.js.
 
 ---
 

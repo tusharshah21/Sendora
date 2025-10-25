@@ -1,6 +1,6 @@
-# Crypto-transfer-web3
+# Sendora
 
-A full-stack decentralized application (DApp) for transferring Ethereum, built with React (frontend) and Solidity/Hardhat 3 (backend smart contract). This project showcases cutting-edge blockchain development practices and is optimized for the ETHOnline 2025 hackathon.
+Sendora is a full-stack decentralized application (DApp) for transferring Ethereum, built with React (frontend) and Solidity/Hardhat 3 (backend smart contract). This project showcases cutting-edge blockchain development practices and is optimized for the ETHOnline 2025 hackathon.
 
 ## 🚀 Hardhat 3 Features Showcased
 
@@ -16,7 +16,7 @@ A full-stack decentralized application (DApp) for transferring Ethereum, built w
 ## Project Structure
 
 ```
-crypto-transfer-web3/
+sendora/
 ├── client/                 # React frontend (Vite, TailwindCSS)
 │   ├── src/
 │   │   ├── components/     # Reusable UI components
@@ -56,8 +56,8 @@ crypto-transfer-web3/
 ### 1. Clone the Repository
 
 ```sh
-git clone https://github.com/tusharshah21/Crypto-transfer-web3.git
-cd Crypto-transfer-web3
+git clone https://github.com/tusharshah21/Sendora.git
+cd Sendora
 ```
 
 ### 2. Smart Contract Setup (`smart_contract`)

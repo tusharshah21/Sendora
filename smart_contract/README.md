@@ -1,6 +1,6 @@
-# Crypto-transfer-web3 Smart Contract (`smart_contract`)
+# Sendora Smart Contract (`smart_contract`)
 
-This folder contains the Ethereum smart contract and Hardhat project for the Crypto-transfer-web3 DApp. The contract enables users to send ETH transactions with messages and keywords, and stores transaction history on-chain.
+This folder contains the Ethereum smart contract and Hardhat project for the Sendora DApp. The contract enables users to send ETH transactions with messages and keywords, and stores transaction history on-chain.
 
 ---
 
