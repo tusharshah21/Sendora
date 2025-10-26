@@ -45,6 +45,10 @@ sendora/
 - **🤖 A2A Agent Messaging**: Smart contract agents negotiate transfers
 - **🏛️ Hedera Integration**: EVM-compatible transactions with agent coordination
 
+## 🎬 Project Presentation
+
+📊 **[View Project Presentation](https://docs.google.com/presentation/d/16CC9Ol8YXZL8xA_sGk9XEQSNYgo2y80lUhvPjH8T3nM/edit?usp=sharing)** - Comprehensive overview of Sendora's architecture, features, and technical implementation.
+
 ## Getting Started
 
 ### Prerequisites
