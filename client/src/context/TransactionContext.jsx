@@ -186,16 +186,29 @@ export const TransactionsProvider = ({ children }) => {
           return;
         }
 
-        // Check balance before sending transaction
+        // Check balance before sending transaction (network-aware)
         const balance = await signer.getBalance();
         const balanceInEther = ethers.utils.formatEther(balance);
 
-        // Hedera requires some HBAR for gas fees
-        const minBalance = ethers.utils.parseEther("0.01"); // 0.01 HBAR minimum for fees
+        // Network-specific balance checking
+        let minBalance, currencySymbol, networkName;
+
+        if (currentChain === 296) {
+          // Hedera testnet
+          minBalance = ethers.utils.parseEther("0.01"); // 0.01 HBAR minimum for fees
+          currencySymbol = "HBAR";
+          networkName = "Hedera";
+        } else {
+          // Ethereum networks (Sepolia, etc.)
+          minBalance = ethers.utils.parseEther("0.001"); // 0.001 ETH minimum for gas
+          currencySymbol = "ETH";
+          networkName = currentChain === 11155111 ? "Sepolia" : "Ethereum";
+        }
+
         const totalRequired = parsedAmount.add(minBalance);
 
         if (balance.lt(totalRequired)) {
-          throw new Error(`Insufficient balance. Have: ${balanceInEther} HBAR, Need: ${ethers.utils.formatEther(totalRequired)} HBAR (including gas fees)`);
+          throw new Error(`Insufficient balance on ${networkName}. Have: ${balanceInEther} ${currencySymbol}, Need: ${ethers.utils.formatEther(totalRequired)} ${currencySymbol} (including gas fees)`);
         }
 
         // Estimate gas to check if transaction would succeed
